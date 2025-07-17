@@ -1,40 +1,52 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { useFonts } from 'expo-font';
-import { Stack } from 'expo-router';
-import * as SplashScreen from 'expo-splash-screen';
-import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import {Auth} from '@/components/Auth';
-import 'react-native-reanimated';
+import { StatusBar } from "react-native";
+import { Slot , useSegments , useRouter } from "expo-router";
+import  { useLayoutEffect } from "react";
+import { useAuth , AuthContextProvider } from '../contexts/AuthContextProvider';
 
-import { useColorScheme } from '@/hooks/useColorScheme';
+// your entry point
+// import { MenuProvider } from 'react-native-popup-menu';
+import '../global.css'
 
-// Prevent the splash screen from auto-hiding before asset loading is complete.
-SplashScreen.preventAutoHideAsync();
+
+const MainLayout = () => {
+
+  const {isAuthenticated} = useAuth();
+  const Segments = useSegments();
+  const router = useRouter();
+
+
+  useLayoutEffect(() => {
+    if(typeof isAuthenticated === 'undefined'){
+      return;
+    }
+    // const inApp = Segments[0] == '(pages)'
+    //console.log(Segments);
+
+    if(isAuthenticated){ 
+      router.replace('/Home');
+    }else if(isAuthenticated == false){ 
+      router.replace('/SignIn');
+    }
+    
+
+  },[isAuthenticated]);
+
+  
+
+  return(
+    <Slot/>
+  );
+
+}
 
 export default function RootLayout() {
-  const colorScheme = useColorScheme();
-  const [loaded] = useFonts({
-    SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
-  });
-
-  useEffect(() => {
-    if (loaded) {
-      SplashScreen.hideAsync();
-    }
-  }, [loaded]);
-
-  if (!loaded) {
-    return null;
-  }
-
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        {/* <Stack.Screen name="Auth" component={Auth} options={{ headerShown: false }} /> */}
-        <Stack.Screen name="+not-found" />
-      </Stack>
-      <StatusBar style="auto" />
-    </ThemeProvider>
+  
+      <AuthContextProvider>
+        <MainLayout />
+        <StatusBar barStyle="dark-content" />
+      </AuthContextProvider>
+
+    
   );
 }

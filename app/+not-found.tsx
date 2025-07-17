@@ -1,13 +1,15 @@
 import { View, Text } from 'react-native'
 import React from 'react'
-import {Auth} from '@/components/Auth';
+import "../global.css";
+
+
 
 
 export default function not_found() {
   return (
     <View>
       <Text>+not-found</Text>
-      <Auth />
+      <Text className='p-5 m-1 rounded-lg bg-gray-400'>fgftfitfudyrdi</Text>
     </View>
   )
 }
